@@ -1,0 +1,28 @@
+Agent: Good morning, you're through to Alpha Insurance, Olivia speaking. How can I help you today?
+Member: Hi Olivia, I’m hoping to get a retirement quotation for my pension. I’m planning to retire early next year and just want to understand what my options look like.
+Agent: Of course, Mr. Thompson. I’d be happy to help with that. Before we proceed, I’ll need to complete a quick identity verification. Is that alright?
+Member: Yes, go ahead.
+Agent: Thank you. Can I start by taking your full name, date of birth, and postcode, please?
+Member: Sure. It’s David Thompson, born 12th March 1964, and my postcode is BN3 5QT.
+Agent: Perfect, thank you. And just to confirm, are you calling about your Personal Pension Plan with Alpha Insurance?
+Member: Yes, that’s correct.
+Agent: Great. I’ll now ask you a couple of security questions to verify your identity. Can you please confirm the last four digits of your National Insurance number?
+Member: It’s 7421.
+Agent: Thank you. And could you tell me the approximate value of your pension fund as of your last statement?
+Member: I believe it was around £185,000.
+Agent: That matches our records. Thank you for confirming. You’ve been successfully verified.
+Member: Brilliant.
+Agent: Now, to help us prepare your retirement quotation, I’ll need a few more details. Are you planning to take your pension as a lump sum, regular income, or a combination of both?
+Member: I’m leaning towards a combination. I’d like to take a lump sum to clear my mortgage and then draw a monthly income.
+Agent: Understood. And when are you hoping to retire?
+Member: Ideally, by April next year—so around the start of the new tax year.
+Agent: Got it. And do you have any other pension pots or retirement income sources we should be aware of when preparing your quotation?
+Member: Just a small workplace pension, but I’d prefer to keep that separate for now.
+Agent: No problem. Thank you for sharing that. Based on what you’ve told me, I’ll now pass this information to one of our retirement specialists. They’ll prepare a tailored quotation and give you a call back within the next 3–5 working days. Is there a preferred time for them to reach you?
+Member: Afternoons are best—anytime after 2 PM.
+Agent: Noted. And just to confirm, we’ll call you on the number you’re using now?
+Member: Yes, that’s fine.
+Agent: Perfect. Is there anything else I can help you with today?
+Member: No, that’s everything. Thanks for your help, Olivia.
+Agent: You’re very welcome, Mr. Thompson. I hope the quotation gives you a clear picture of your retirement options. Wishing you a smooth transition into retirement. Take care and goodbye for now.
+Member: Thanks, goodbye.

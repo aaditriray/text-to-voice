@@ -1,4 +1,4 @@
-
+﻿# -*- coding: utf-8 -*-
 import pyttsx3
 import os
 import time
@@ -11,7 +11,6 @@ def queue_audio_segment(engine, text, voice_id, output_file):
         print(f"Queuing audio generation for: {output_file}")
         engine.setProperty('voice', voice_id)
         engine.save_to_file(text, output_file)
-        
     except Exception as e:
         print(f"\nError queuing audio segment: {str(e)}")
         raise
@@ -47,85 +46,14 @@ def wait_for_file(output_file, timeout=30):
         raise Exception(f"File was created but is empty: {output_file}")
     print(f"File size: {file_size} bytes")
 
-# Initialize the TTS engine with a new driver
-engine = pyttsx3.init()
-
-# Set base properties
-engine.setProperty('rate', 160)  # Speed of speech
-engine.setProperty('volume', 1.0)  # Volume
-
-# Make sure any previous loops are stopped
-try:
-    engine.endLoop()
-except:
-    pass
-
-# Get available voices
-voices = engine.getProperty('voices')
-
-# Find a male and female voice
-male_voice = None
-female_voice = None
-
-# Print available voices and select appropriate ones
-print("Available voices:")
-for voice in voices:
-    print(f"ID: {voice.id}, Name: {voice.name}, Languages: {voice.languages}, Gender: {voice.gender}")
-    # Try to find English voices
-    if "en" in str(voice.languages).lower():
-        if voice.gender == 'VoiceGenderMale' and not male_voice:
-            male_voice = voice
-        elif voice.gender == 'VoiceGenderFemale' and not female_voice:
-            female_voice = voice
-
-if not male_voice:
-    male_voice = voices[0]  # Fallback to first voice
-if not female_voice:
-    female_voice = voices[-1]  # Fallback to last voice
-
-print(f"\nSelected voices:")
-print(f"Agent (Female): {female_voice.name}")
-print(f"Member (Male): {male_voice.name}")
-
-# Full transcript text
-transcript = """Agent: Good morning, you're through to Alpha Insurance, Olivia speaking. How can I help you today?
-Member: Hi Olivia, I’m hoping to get a retirement quotation for my pension. I’m planning to retire early next year and just want to understand what my options look like.
-Agent: Of course, Mr. Thompson. I’d be happy to help with that. Before we proceed, I’ll need to complete a quick identity verification. Is that alright?
-Member: Yes, go ahead.
-Agent: Thank you. Can I start by taking your full name, date of birth, and postcode, please?
-Member: Sure. It’s David Thompson, born 12th March 1964, and my postcode is BN3 5QT.
-Agent: Perfect, thank you. And just to confirm, are you calling about your Personal Pension Plan with Alpha Insurance?
-Member: Yes, that’s correct.
-Agent: Great. I’ll now ask you a couple of security questions to verify your identity. Can you please confirm the last four digits of your National Insurance number?
-Member: It’s 7421.
-Agent: Thank you. And could you tell me the approximate value of your pension fund as of your last statement?
-Member: I believe it was around £185,000.
-Agent: That matches our records. Thank you for confirming. You’ve been successfully verified.
-Member: Brilliant.
-Agent: Now, to help us prepare your retirement quotation, I’ll need a few more details. Are you planning to take your pension as a lump sum, regular income, or a combination of both?
-Member: I’m leaning towards a combination. I’d like to take a lump sum to clear my mortgage and then draw a monthly income.
-Agent: Understood. And when are you hoping to retire?
-Member: Ideally, by April next year—so around the start of the new tax year.
-Agent: Got it. And do you have any other pension pots or retirement income sources we should be aware of when preparing your quotation?
-Member: Just a small workplace pension, but I’d prefer to keep that separate for now.
-Agent: No problem. Thank you for sharing that. Based on what you’ve told me, I’ll now pass this information to one of our retirement specialists. They’ll prepare a tailored quotation and give you a call back within the next 3–5 working days. Is there a preferred time for them to reach you?
-Member: Afternoons are best—anytime after 2 PM.
-Agent: Noted. And just to confirm, we’ll call you on the number you’re using now?
-Member: Yes, that’s fine.
-Agent: Perfect. Is there anything else I can help you with today?
-Member: No, that’s everything. Thanks for your help, Olivia.
-Agent: You’re very welcome, Mr. Thompson. I hope the quotation gives you a clear picture of your retirement options. Wishing you a smooth transition into retirement. Take care and goodbye for now.
-Member: Thanks, goodbye.
-"""
-
-# Create output directory if it doesn't exist
-script_dir = os.path.dirname(os.path.abspath(__file__))
-output_dir = os.path.join(script_dir, 'conversation_audio')
-os.makedirs(output_dir, exist_ok=True)
-
-print("\nDebug Info:")
-print(f"Script directory: {script_dir}")
-print(f"Output directory: {output_dir}")
+def read_conversation(file_path):
+    """Read conversation from a text file"""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except Exception as e:
+        print(f"Error reading conversation file: {str(e)}")
+        raise
 
 def process_conversation(transcript, engine, male_voice, female_voice, output_dir):
     """Process the conversation and create audio files"""
@@ -196,34 +124,17 @@ def process_conversation(transcript, engine, male_voice, female_voice, output_di
             
             # Wait for file to be created
             print(f"Debug: Waiting for file to be created: {current_file}")
-            timeout = 30
-            start_time = time.time()
-            while not os.path.exists(current_file):
-                if time.time() - start_time > timeout:
-                    raise TimeoutError(f"Timeout waiting for file: {current_file}")
-                time.sleep(0.1)
-                print(".", end="", flush=True)
-            
-            # Verify the file size
-            file_size = os.path.getsize(current_file)
-            if file_size == 0:
-                print(f"\nWarning: Generated file is empty: {current_file}")
-                continue
-            
-            print(f"\nDebug: File created successfully: {current_file} (size: {file_size} bytes)")
-            conversation_parts.append(current_file)
+            try:
+                wait_for_file(current_file, 30)
+                conversation_parts.append(current_file)
+            except Exception as e:
+                print(f"\nError waiting for file {current_file}: {str(e)}")
+                raise
+                
+        # Combine all parts using FFmpeg
+        print("\nPreparing to combine all audio segments...")
         
-        # Check if ffmpeg is available
-        try:
-            subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
-        except (subprocess.SubprocessError, FileNotFoundError):
-            print("\n⚠️ FFmpeg not found. Cannot combine audio files.")
-            print("Please ensure FFmpeg is installed and in your system PATH.")
-            print("You can download FFmpeg from: https://www.gyan.dev/ffmpeg/builds/")
-            raise Exception("FFmpeg not found. Audio files cannot be combined.")
-
-        # Create the concat file for direct concatenation
-        concat_list = os.path.join(lines_dir, 'concat_list.txt')
+        # Create concat file for FFmpeg
         with open(concat_list, 'w') as f:
             # Simply write all files in order without any silence
             for audio_file in conversation_parts:
@@ -278,16 +189,78 @@ def process_conversation(transcript, engine, male_voice, female_voice, output_di
         except:
             pass
 
+def main():
+    # Initialize the TTS engine with a new driver
+    engine = pyttsx3.init()
 
-# Process the conversation
-try:
-    output_file = process_conversation(transcript, engine, male_voice, female_voice, output_dir)
-    print(f"\n✅ Successfully created conversation audio: {os.path.basename(output_file)}")
-except Exception as e:
-    print(f"\n❌ Error during audio processing: {str(e)}")
-finally:
-    # Always try to stop the engine properly
+    # Set base properties
+    engine.setProperty('rate', 160)  # Speed of speech
+    engine.setProperty('volume', 1.0)  # Volume
+
+    # Make sure any previous loops are stopped
     try:
-        engine.stop()
+        engine.endLoop()
     except:
         pass
+
+    # Get available voices
+    voices = engine.getProperty('voices')
+
+    # Find a male and female voice
+    male_voice = None
+    female_voice = None
+
+    # Print available voices and select appropriate ones
+    print("Available voices:")
+    for voice in voices:
+        print(f"ID: {voice.id}, Name: {voice.name}, Languages: {voice.languages}, Gender: {voice.gender}")
+        # Try to find English voices
+        if "en" in str(voice.languages).lower():
+            if voice.gender == 'VoiceGenderMale' and not male_voice:
+                male_voice = voice
+            elif voice.gender == 'VoiceGenderFemale' and not female_voice:
+                female_voice = voice
+
+    if not male_voice:
+        male_voice = voices[0]  # Fallback to first voice
+    if not female_voice:
+        female_voice = voices[-1]  # Fallback to last voice
+
+    print(f"\nSelected voices:")
+    print(f"Agent (Female): {female_voice.name}")
+    print(f"Member (Male): {male_voice.name}")
+
+    # Set up paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, 'conversation_audio')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Read transcript from file
+    transcript_file = os.path.join(script_dir, 'conversation.txt')
+    if not os.path.exists(transcript_file):
+        print(f"Error: Conversation file not found: {transcript_file}")
+        print("Please create a conversation.txt file in the same directory as this script.")
+        exit(1)
+
+    # Read the transcript
+    transcript = read_conversation(transcript_file)
+
+    # Verify that the transcript is not empty
+    if not transcript.strip():
+        print("Error: Conversation file is empty")
+        exit(1)
+
+    print("\nSuccessfully loaded conversation from file.")
+    print("\nDebug Info:")
+    print(f"Script directory: {script_dir}")
+    print(f"Output directory: {output_dir}")
+
+    try:
+        output_file = process_conversation(transcript, engine, male_voice, female_voice, output_dir)
+        print(f"\n✅ Successfully created: {output_file}")
+    except Exception as e:
+        print(f"\n❌ Error: {str(e)}")
+        exit(1)
+
+if __name__ == "__main__":
+    main()
