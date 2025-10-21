@@ -1,0 +1,11 @@
+[project]
+name = "text-to-voice"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyttsx3>=2.99",
+    "pydub>=0.25.1",
+    "ffmpeg-python>=0.2.0",
+]
