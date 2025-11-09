@@ -153,12 +153,12 @@ def process_conversation(transcript, engine, male_voice, female_voice, output_di
         print(f"Combined file: {os.path.basename(output_file)}")
         
         # Clean up individual files
-        print("\nCleaning up temporary files...")
-        for file in conversation_parts + [concat_list]:
-            try:
-                os.remove(file)
-            except:
-                pass
+        #print("\nCleaning up temporary files...")
+        #for file in conversation_parts + [concat_list]:
+        #    try:
+        #        os.remove(file)
+        #    except:
+        #        pass
         try:
             os.rmdir(lines_dir)
         except:
@@ -180,14 +180,14 @@ def process_conversation(transcript, engine, male_voice, female_voice, output_di
             pass
             
         # Try to clean up if anything goes wrong
-        try:
-            for file in conversation_parts:
-                if os.path.exists(file):
-                    os.remove(file)
-            if os.path.exists(lines_dir):
-                os.rmdir(lines_dir)
-        except:
-            pass
+        #try:
+        #    for file in conversation_parts:
+        #        if os.path.exists(file):
+        #            os.remove(file)
+        #    if os.path.exists(lines_dir):
+        #        os.rmdir(lines_dir)
+        #except:
+        #    pass
 
 def main():
     # Initialize the TTS engine with a new driver
