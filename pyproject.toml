@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pyttsx3>=2.99",
+    "gtts>=2.4.0",
     "pydub>=0.25.1",
     "ffmpeg-python>=0.2.0",
 ]
